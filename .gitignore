@@ -1,0 +1,16 @@
+# Build
+target/
+*.class
+.sources.txt
+
+# Banco de dados gerado em tempo de execução
+loja.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+bin/

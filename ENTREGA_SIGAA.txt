@@ -1,0 +1,15 @@
+ATIVIDADE UNIDADE 03 - Programação Orientada a Objetos (LP2)
+Professor: Jefferson Gomes Dutra
+
+Integrantes do grupo (preencher):
+- Nome completo: ______________________  Matrícula: __________
+- Nome completo: ______________________  Matrícula: __________
+- Nome completo: ______________________  Matrícula: __________
+- Nome completo: ______________________  Matrícula: __________
+
+Link do repositório (preencher):
+- https://github.com/__________/__________
+
+Observações:
+- As instruções para rodar a aplicação estão no README.md do repositório.
+- O código-fonte zipado também acompanha esta entrega.

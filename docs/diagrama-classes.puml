@@ -1,0 +1,152 @@
+@startuml diagrama-classes
+title Sistema de Pedidos (Loja) - Diagrama de Classes
+
+' ===================== MODELO DE DOMÍNIO =====================
+
+abstract class Pessoa {
+  - id: int
+  - nome: String
+  - cpf: String
+  - email: String
+  + {abstract} descricaoPapel(): String
+}
+
+abstract class Cliente {
+  - endereco: String
+  + {abstract} calcularDesconto(valorCompra: double): double
+}
+
+class ClienteRegular {
+  - primeiraCompra: boolean
+  + calcularDesconto(valorCompra: double): double
+  + registrarCompraConcluida(): void
+}
+
+class ClienteVip {
+  - pontosFidelidade: int
+  + calcularDesconto(valorCompra: double): double
+  + acumularPontos(valorPago: double): void
+}
+
+abstract class Produto {
+  - id: int
+  - nome: String
+  - precoBase: double
+  - estoque: int
+  + {abstract} calcularFrete(): double
+  + {abstract} tipo(): String
+  + baixarEstoque(qtd: int): void
+  + reporEstoque(qtd: int): void
+}
+
+class ProdutoFisico {
+  - pesoKg: double
+  + calcularFrete(): double
+}
+
+class ProdutoDigital {
+  - tamanhoMb: double
+  - urlDownload: String
+  + calcularFrete(): double
+}
+
+class ItemPedido {
+  - id: int
+  - quantidade: int
+  + subtotal(): double
+  + freteTotal(): double
+}
+
+class Pedido {
+  - id: int
+  - situacao: SituacaoPedido
+  + adicionarItem(item: ItemPedido): void
+  + totalBruto(): double
+  + descontoCliente(): double
+  + totalAPagar(): double
+  + pagar(p: Pagamento): void
+  + enviar(): void
+  + entregar(): void
+  + cancelar(): void
+}
+
+enum SituacaoPedido {
+  ACEITO
+  PAGO
+  ENVIADO
+  ENTREGUE
+  CANCELADO
+  + proximosPermitidos(): List
+  + podeIrPara(destino): boolean
+}
+
+abstract class Pagamento {
+  - id: int
+  - valorBase: double
+  + {abstract} calcularValorFinal(): double
+  + {abstract} forma(): String
+}
+
+class PagamentoPix {
+  - chavePix: String
+  + calcularValorFinal(): double
+}
+
+class PagamentoCartao {
+  - parcelas: int
+  + calcularValorFinal(): double
+  + valorParcela(): double
+}
+
+' ===================== EXCEÇÕES =====================
+
+class ValidacaoException
+class EstoqueInsuficienteException
+class TransicaoInvalidaException
+class EntidadeNaoEncontradaException
+class PagamentoInsuficienteException
+
+' ===================== PERSISTÊNCIA / SERVIÇO =====================
+
+class ConexaoSQLite
+class ClienteDAO
+class ProdutoDAO
+class PedidoDAO
+class ClienteService
+class ProdutoService
+class PedidoService
+class MenuPrincipal
+
+' ===================== HERANÇAS =====================
+
+Pessoa <|-- Cliente
+Cliente <|-- ClienteRegular
+Cliente <|-- ClienteVip
+Produto <|-- ProdutoFisico
+Produto <|-- ProdutoDigital
+Pagamento <|-- PagamentoPix
+Pagamento <|-- PagamentoCartao
+
+' ===================== RELAÇÕES DE DOMÍNIO =====================
+
+Pedido "1" o-- "1" Cliente            : cliente
+Pedido "1" *-- "1..*" ItemPedido      : itens
+Pedido "1" --> "1" SituacaoPedido     : situacao
+Pedido "1" o-- "0..1" Pagamento       : pagamento
+ItemPedido "1" --> "1" Produto        : produto
+
+' ===================== RELAÇÕES DE INFRAESTRUTURA =====================
+
+ClienteService --> ClienteDAO
+ProdutoService --> ProdutoDAO
+PedidoService --> PedidoDAO
+PedidoService --> ClienteService
+PedidoService --> ProdutoService
+ClienteDAO ..> ConexaoSQLite
+ProdutoDAO ..> ConexaoSQLite
+PedidoDAO ..> ConexaoSQLite
+MenuPrincipal --> ClienteService
+MenuPrincipal --> ProdutoService
+MenuPrincipal --> PedidoService
+
+@enduml
